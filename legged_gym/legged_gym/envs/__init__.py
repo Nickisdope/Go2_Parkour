@@ -40,7 +40,8 @@ from .cassie.cassie_config import CassieRoughCfg, CassieRoughCfgPPO
 from .a1.a1_config import A1RoughCfg, A1RoughCfgPPO
 
 
-from legged_gym.envs.go2.go2_config import Go2RoughCfg, Go2RoughCfgPPO
+from legged_gym.envs.go2.go2_config import Go2CompetitionCfg, Go2CompetitionPPO
+from legged_gym.envs.go2.go2_rough_config import Go2RoughCfg, Go2RoughCfgPPO
 from legged_gym.envs.go2.go2_robot import Go2Robot
 
 
@@ -54,4 +55,5 @@ task_registry.register( "anymal_c_flat", Anymal, AnymalCFlatCfg(), AnymalCFlatCf
 task_registry.register( "anymal_b", Anymal, AnymalBRoughCfg(), AnymalBRoughCfgPPO() )
 task_registry.register( "a1", LeggedRobot, A1RoughCfg(), A1RoughCfgPPO() )
 task_registry.register( "cassie", Cassie, CassieRoughCfg(), CassieRoughCfgPPO() )
+task_registry.register( "go2_competition", Go2Robot, Go2CompetitionCfg(), Go2CompetitionPPO())
 task_registry.register( "go2", Go2Robot, Go2RoughCfg(), Go2RoughCfgPPO())
