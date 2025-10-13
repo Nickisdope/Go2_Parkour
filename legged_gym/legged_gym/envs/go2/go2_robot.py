@@ -17,13 +17,10 @@ from legged_gym.envs.base.base_task import BaseTask
 from legged_gym.utils.terrain import Terrain
 from legged_gym.utils.math import quat_apply_yaw, wrap_to_pi, torch_rand_sqrt_float
 from legged_gym.utils.helpers import class_to_dict
-from .go2_config import Go2RoughCfg
 from  legged_gym.envs.base.legged_robot import LeggedRobot
 #from legged_gym.utils.isaacgym_utils import get_euler_xyz as get_euler_xyz_in_tensor
 
 class Go2Robot(LeggedRobot):
-    cfg: Go2RoughCfg
-
     def step(self, actions):
         """ Apply actions, simulate, call self.post_physics_step()
 
@@ -167,7 +164,6 @@ class Go2Robot(LeggedRobot):
                                     (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
                                     self.dof_vel * self.obs_scales.dof_vel,
                                     self.actions,
-
                                     ),dim=-1)
         # add perceptive inputs if not blind
         if self.cfg.terrain.measure_heights:
@@ -178,6 +174,7 @@ class Go2Robot(LeggedRobot):
         # add noise if needed
         if self.add_noise:
             self.obs_buf += (2 * torch.rand_like(self.obs_buf) - 1) * self.noise_scale_vec
+    
     def create_competition_map(self):
         num_terains = 9
         terrain_width = self.cfg.terrain.terrain_width

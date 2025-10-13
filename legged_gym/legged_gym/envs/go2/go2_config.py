@@ -1,16 +1,17 @@
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-class Go2RoughCfg( LeggedRobotCfg ):
+class Go2CompetitionCfg( LeggedRobotCfg ):
 
     class env( LeggedRobotCfg.env ):
         num_envs = 4096
         num_observations = 235
         symmetric = True  #True :  set num_privileged_obs = None;    false: num_privileged_obs = observations + 187 ,set "terrain.measure_heights" to true
-        num_privileged_obs = 235#num_observations + 187 # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
+        num_privileged_obs = 235 #num_observations + 187 # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
         num_actions = 12
         env_spacing = 3.  # not used with heightfields/trimeshes 
         send_timeouts = True # send time out information to the algorithm
         episode_length_s = 25 # episode length in seconds
+
     class terrain( LeggedRobotCfg.env ):
         mesh_type = 'competition' # "heightfield" # none, plane, heightfield or trimesh
         horizontal_scale = 0.25 # [m]
@@ -84,6 +85,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
         terminate_after_contacts_on = ["base"]
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = True
+
     class domain_rand:
         randomize_friction = False
         friction_range = [0.2, 1.5]
@@ -98,7 +100,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
 
         randomize_motor = False
         motor_strength_range = [0.8, 1.2]
-
+    
     class rewards( LeggedRobotCfg.rewards ):
         class scales( LeggedRobotCfg.rewards.scales ):
             termination = -0.
@@ -142,7 +144,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
         base_height_target = 0.25
         max_contact_force = 100. # forces above this value are penalized
 
-class Go2RoughCfgPPO( LeggedRobotCfgPPO ):
+class Go2CompetitionPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
     class runner( LeggedRobotCfgPPO.runner ):
