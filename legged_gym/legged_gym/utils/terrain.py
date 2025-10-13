@@ -57,18 +57,18 @@ class Terrain:
             self.border = int(cfg.border_size/self.cfg.horizontal_scale)
             self.tot_cols = int(cfg.num_cols * self.width_per_env_pixels) 
             self.tot_rows = int(cfg.num_rows * self.length_per_env_pixels) 
+            self.height_field_raw = np.zeros((self.tot_rows , self.tot_cols), dtype=np.int16)
         else:
+            self.border = int(cfg.border_size/self.cfg.horizontal_scale)
             self.tot_cols = int(cfg.num_cols * self.width_per_env_pixels) + 2 * self.border
             self.tot_rows = int(cfg.num_rows * self.length_per_env_pixels) + 2 * self.border
+            self.height_field_raw = np.zeros((self.tot_rows , self.tot_cols), dtype=np.int16)
             if cfg.curriculum:
                 self.curiculum()
             elif cfg.selected:
                 self.selected_terrain()
             else:    
                 self.randomized_terrain()   
-
-        self.height_field_raw = np.zeros((self.tot_rows , self.tot_cols), dtype=np.int16)
-
         
         self.heightsamples = self.height_field_raw
         if self.type in ['trimesh','competition']:
