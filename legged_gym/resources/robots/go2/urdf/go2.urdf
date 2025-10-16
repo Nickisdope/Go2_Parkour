@@ -148,12 +148,12 @@ Stephen Brawner (brawner@gmail.com)
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0.08 0" />
       <geometry>
         <cylinder length="0.04" radius="0.046" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="FL_hip_joint"
@@ -407,12 +407,12 @@ Stephen Brawner (brawner@gmail.com)
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 -0.08 0" />
       <geometry>
         <cylinder length="0.04" radius="0.046" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="FR_hip_joint"
@@ -666,12 +666,12 @@ Stephen Brawner (brawner@gmail.com)
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0.08 0" />
       <geometry>
         <cylinder length="0.04" radius="0.046" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="RL_hip_joint"
@@ -925,12 +925,12 @@ Stephen Brawner (brawner@gmail.com)
           rgba="1 1 1 1" />
       </material>
     </visual>
-    <collision>
+    <!-- <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 -0.08 0" />
       <geometry>
         <cylinder length="0.04" radius="0.046" />
       </geometry>
-    </collision>
+    </collision> -->
   </link>
   <joint
     name="RR_hip_joint"
