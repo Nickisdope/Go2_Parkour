@@ -123,7 +123,8 @@ class Terrain:
         stepping_stones_size = 1.5 * (1.05 - difficulty)
         stone_distance = 0.05 if difficulty==0 else 0.1
         gap_size = 1. * difficulty
-        pit_depth = 1. * difficulty
+        pit_depth = 0.8 * difficulty
+        # print(pit_depth)
         if choice < self.proportions[0]:
             if choice < self.proportions[0]/ 2:
                 slope *= -1
@@ -145,7 +146,7 @@ class Terrain:
         elif choice < self.proportions[6]:
             gap_terrain(terrain, gap_size=gap_size, platform_size=3.)
         else:
-            pit_terrain(terrain, depth=pit_depth, platform_size=4.)
+            pit_terrain(terrain, depth=pit_depth, platform_size=2.)
         
         return terrain
 

@@ -1,6 +1,40 @@
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 class Go2RoughCfg( LeggedRobotCfg ):
+    class env:
+        num_envs = 4096
+        num_observations = 294
+        num_privileged_obs = None # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
+        num_actions = 12
+        env_spacing = 3.  # not used with heightfields/trimeshes 
+        send_timeouts = True # send time out information to the algorithm
+        episode_length_s = 20 # episode length in seconds
+
+    class terrain:
+        mesh_type = 'trimesh' # "heightfield" # none, plane, heightfield or trimesh
+        horizontal_scale = 0.1 # [m]
+        vertical_scale = 0.005 # [m]
+        border_size = 25 # [m]
+        curriculum = True
+        static_friction = 1.0
+        dynamic_friction = 1.0
+        restitution = 0.
+        # rough terrain only:
+        measure_heights = True
+        measured_points_x = [-0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8] # 1mx1.6m rectangle (without center line)
+        measured_points_y = [-0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5]
+        selected = False # select a unique terrain type and pass all arguments
+        terrain_kwargs = None # Dict of arguments for selected terrain
+        max_init_terrain_level = 5 # starting curriculum state
+        terrain_length = 8.
+        terrain_width = 8.
+        num_rows= 10 # number of terrain rows (levels)
+        num_cols = 20 # number of terrain cols (types)
+        # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
+        terrain_proportions = [0., 0., 0., 0., 0., 0., 0., 1.]
+        # terrain_proportions = [0.1, 0.1, 0.35, 0.25, 0.2]
+        # trimesh only:
+        slope_treshold = 0.75 # slopes above this threshold will be corrected to vertical surfaces
 
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.42] # x,y,z [m]
@@ -48,7 +82,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
         name = "go2"
         foot_name = "foot"
         penalize_contacts_on = ["thigh", "calf"]
-        terminate_after_contacts_on = ["base"]
+        terminate_after_contacts_on = ["base", "Head_upper", "Head_lower"]
         self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = True
 

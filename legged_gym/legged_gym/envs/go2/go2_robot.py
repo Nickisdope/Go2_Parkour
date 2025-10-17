@@ -79,6 +79,7 @@ class Go2Robot(LeggedRobot):
 
         if self.viewer and self.enable_viewer_sync and self.debug_viz:
             self._draw_debug_vis()
+
     def check_termination(self):
         """ Check if environments need to be reset
         """
@@ -86,9 +87,12 @@ class Go2Robot(LeggedRobot):
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
-        base_z = self.root_states[:, 2]
-        z_threshold_buff = base_z < -3
-        self.reset_buf |= z_threshold_buff
+        # base_z = self.root_states[:, 2]
+        # z_threshold_buff = base_z < -3
+        # self.reset_buf |= z_threshold_buff
+
+        body_height = self._get_body_height()
+        self.reset_buf |= body_height < 0.05 # NOTE: hardcode here
 
     def reset_idx(self, env_ids):
         """ Reset some environments.
@@ -170,6 +174,7 @@ class Go2Robot(LeggedRobot):
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
             #if not self.cfg.env.symmetric:
             self.obs_buf= torch.cat((self.obs_buf, heights), dim=-1)
+            self.obs_buf = torch.cat((self.obs_buf, self.measured_foot_clearance * self.obs_scales.height_measurements), dim=-1)
             self.privileged_obs_buf = self.obs_buf
         # add noise if needed
         if self.add_noise:
@@ -334,6 +339,7 @@ class Go2Robot(LeggedRobot):
 
         if self.cfg.terrain.measure_heights:
             self.measured_heights = self._get_heights()
+            self.measured_foot_clearance = self._get_foot_clearance()
         if self.cfg.domain_rand.push_robots and  (self.common_step_counter % self.cfg.domain_rand.push_interval == 0):
             self._push_robots()
 
@@ -482,7 +488,7 @@ class Go2Robot(LeggedRobot):
         noise_vec[24:36] = noise_scales.dof_vel * noise_level * self.obs_scales.dof_vel
         noise_vec[36:48] = 0. # previous actions
         if self.cfg.terrain.measure_heights:
-            noise_vec[48:235] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
+            noise_vec[48:] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
         return noise_vec
 
     #----------------------------------------
@@ -500,11 +506,11 @@ class Go2Robot(LeggedRobot):
         self.gym.refresh_rigid_body_state_tensor(self.sim)
         # create some wrapper tensors for different slices
 
-        self.rigid_body_states = gymtorch.wrap_tensor(rigid_body_tensor).view(self.num_envs, -1, 13)
+        self.rigid_body_state = gymtorch.wrap_tensor(rigid_body_tensor).view(self.num_envs, -1, 13)
 
 
 
-        self.foot_pos = self.rigid_body_states[:, self.feet_indices, :3]
+        self.foot_pos = self.rigid_body_state[:, self.feet_indices, :3]
 
         # xyz,quat,lin_vel,ang_vel
 
@@ -661,7 +667,6 @@ class Go2Robot(LeggedRobot):
         asset_options.disable_gravity = self.cfg.asset.disable_gravity
 
         robot_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
-        self.robot_asset = robot_asset
         self.num_dof = self.gym.get_asset_dof_count(robot_asset)
         self.num_bodies = self.gym.get_asset_rigid_body_count(robot_asset)
         dof_props_asset = self.gym.get_asset_dof_properties(robot_asset)
@@ -852,6 +857,43 @@ class Go2Robot(LeggedRobot):
         heights = torch.min(heights, heights3)
 
         return heights.view(self.num_envs, -1) * self.terrain.cfg.vertical_scale
+
+    def _get_foot_clearance(self, env_ids = None):
+        if env_ids is None:
+            env_ids = torch.arange(self.num_envs, device=self.device)
+        foot_positions = self.rigid_body_state.view(self.num_envs, self.num_bodies, 13)[:, self.feet_indices,
+                              0:3].reshape((self.num_envs,len(self.feet_indices),3)) #  in world frame
+        points = foot_positions[env_ids] # shape = (num_envs, num_leg, 3)
+        points += self.terrain.cfg.border_size
+        points = (points / self.terrain.cfg.horizontal_scale).long()
+        px = points[:,:,0].view(-1)
+        py = points[:,:,1].view(-1)
+        px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
+        py = torch.clip(py, 0, self.height_samples.shape[1] - 2)
+        heights1 = self.height_samples[px, py]
+        heights2 = self.height_samples[px + 1, py]
+        heights3 = self.height_samples[px, py + 1]
+        #! 这个在斜坡上没啥安全感的, 所以还是取 max 了
+        heights = torch.max(heights1, heights2)
+        heights = torch.max(heights, heights3).view(len(env_ids),-1) # shape = (num_envs, num_leg)
+
+        delta_height =  foot_positions[env_ids,:,2]   - heights * self.terrain.cfg.vertical_scale
+        delta_height -=  0.02
+        return delta_height.view(len(env_ids),-1)
+
+    def _get_body_height(self):
+        root_position = self.root_states[:, :3]
+        points = ((root_position + self.terrain.cfg.border_size)/self.terrain.cfg.horizontal_scale).long()
+        px = points[:,0]
+        py = points[:,1]
+        px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
+        py = torch.clip(py, 0, self.height_samples.shape[1] - 2)
+        heights1 = self.height_samples[px, py]
+        heights2 = self.height_samples[px + 1, py]
+        heights3 = self.height_samples[px, py + 1]
+        heights = torch.min(heights1, heights2)
+        heights = torch.min(heights, heights3)
+        return root_position[:,2] - heights * self.terrain.cfg.vertical_scale
 
     #------------ reward functions----------------
     def _reward_lin_vel_z(self):
