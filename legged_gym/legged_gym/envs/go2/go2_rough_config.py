@@ -12,7 +12,7 @@ class Go2RoughCfg( LeggedRobotCfg ):
 
     class terrain:
         mesh_type = 'trimesh' # "heightfield" # none, plane, heightfield or trimesh
-        horizontal_scale = 0.1 # [m]
+        horizontal_scale = 0.05 # [m]
         vertical_scale = 0.005 # [m]
         border_size = 25 # [m]
         curriculum = True
@@ -26,12 +26,12 @@ class Go2RoughCfg( LeggedRobotCfg ):
         selected = False # select a unique terrain type and pass all arguments
         terrain_kwargs = None # Dict of arguments for selected terrain
         max_init_terrain_level = 5 # starting curriculum state
-        terrain_length = 8.
-        terrain_width = 8.
+        terrain_length = 12.
+        terrain_width = 12.
         num_rows= 10 # number of terrain rows (levels)
-        num_cols = 20 # number of terrain cols (types)
+        num_cols = 5 # number of terrain cols (types)
         # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
-        terrain_proportions = [0., 0., 0., 0., 0., 0., 0., 1.]
+        terrain_proportions = [0., 0., 0., 0., 0., 1., 0., 0.]
         # terrain_proportions = [0.1, 0.1, 0.35, 0.25, 0.2]
         # trimesh only:
         slope_treshold = 0.75 # slopes above this threshold will be corrected to vertical surfaces
@@ -115,5 +115,6 @@ class Go2RoughCfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'rough_go2'
+        num_steps_per_env = 48 # per iteration
 
   
