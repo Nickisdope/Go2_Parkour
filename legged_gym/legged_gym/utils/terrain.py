@@ -178,19 +178,32 @@ class Terrain:
         env_origin_z = np.max(terrain.height_field_raw[x1:x2, y1:y2])*terrain.vertical_scale
         self.env_origins[i, j] = [env_origin_x, env_origin_y, env_origin_z]
 
+# def gap_terrain(terrain, gap_size, platform_size=1.):
+#     gap_size = int(gap_size / terrain.horizontal_scale)
+#     platform_size = int(platform_size / terrain.horizontal_scale)
+
+#     center_x = terrain.length // 2
+#     center_y = terrain.width // 2
+#     x1 = (terrain.length - platform_size) // 2
+#     x2 = x1 + gap_size
+#     y1 = (terrain.width - platform_size) // 2
+#     y2 = y1 + gap_size
+   
+#     terrain.height_field_raw[center_x-x2 : center_x + x2, center_y-y2 : center_y + y2] = -1000
+#     terrain.height_field_raw[center_x-x1 : center_x + x1, center_y-y1 : center_y + y1] = 0
+
 def gap_terrain(terrain, gap_size, platform_size=1.):
     gap_size = int(gap_size / terrain.horizontal_scale)
     platform_size = int(platform_size / terrain.horizontal_scale)
 
-    center_x = terrain.length // 2
-    center_y = terrain.width // 2
-    x1 = (terrain.length - platform_size) // 2
-    x2 = x1 + gap_size
-    y1 = (terrain.width - platform_size) // 2
-    y2 = y1 + gap_size
-   
-    terrain.height_field_raw[center_x-x2 : center_x + x2, center_y-y2 : center_y + y2] = -1000
-    terrain.height_field_raw[center_x-x1 : center_x + x1, center_y-y1 : center_y + y1] = 0
+    x1 = (terrain.length - platform_size - 2 * gap_size) // 2
+    x2 = x1 + platform_size + 2 * gap_size
+
+    y1 = (terrain.width - platform_size - 2 * gap_size) // 2
+    y2 = y1 + platform_size + 2 * gap_size
+
+    terrain.height_field_raw[x1:x2, y1:y2] = -1000
+    terrain.height_field_raw[x1 + gap_size:x2 - gap_size, y1 + gap_size:y2 - gap_size] = 0
 
 def pit_terrain(terrain, depth, platform_size=1.):
     depth = int(depth / terrain.vertical_scale)
