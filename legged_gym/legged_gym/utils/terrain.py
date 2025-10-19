@@ -150,7 +150,7 @@ class Terrain:
             terrain_utils.discrete_obstacles_terrain(terrain, discrete_obstacles_height, rectangle_min_size, rectangle_max_size, num_rectangles, platform_size=3.)
         elif choice < self.proportions[5]:
             # terrain_utils.stepping_stones_terrain(terrain, stone_size=stepping_stones_size, stone_distance=stone_distance, max_height=0., platform_size=4.)
-            # terrain_utils.stepping_stones_terrain(terrain, stone_size=1., stone_distance=0.25, max_height=0.2, platform_size=2.0)
+            # terrain_utils.stepping_stones_terrain(terrain, stone_size=1., stone_distance=0.25, max_height=0.2, platform_size=3.0)
             terrain_utils.stepping_stones_terrain(terrain, stone_size=stone_size, stone_distance=stone_distance, max_height=max_height, platform_size=3.0)
         elif choice < self.proportions[6]:
             gap_terrain(terrain, gap_size=gap_size, platform_size=3.)
