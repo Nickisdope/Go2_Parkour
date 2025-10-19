@@ -864,8 +864,11 @@ class Go2Robot(LeggedRobot):
         foot_positions = self.rigid_body_state.view(self.num_envs, self.num_bodies, 13)[:, self.feet_indices,
                               0:3].reshape((self.num_envs,len(self.feet_indices),3)) #  in world frame
         points = foot_positions[env_ids] # shape = (num_envs, num_leg, 3)
-        points += self.terrain.cfg.border_size
-        points = (points / self.terrain.cfg.horizontal_scale).long()
+        if self.cfg.terrain.mesh_type == 'competition':
+            points = (points / self.terrain.cfg.horizontal_scale).long()
+        else:
+            points += self.terrain.cfg.border_size
+            points = (points / self.terrain.cfg.horizontal_scale).long()
         px = points[:,:,0].view(-1)
         py = points[:,:,1].view(-1)
         px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
@@ -883,7 +886,11 @@ class Go2Robot(LeggedRobot):
 
     def _get_body_height(self):
         root_position = self.root_states[:, :3]
-        points = ((root_position + self.terrain.cfg.border_size)/self.terrain.cfg.horizontal_scale).long()
+        if self.cfg.terrain.mesh_type == 'competition':
+            points = root_position
+            points = (points/self.terrain.cfg.horizontal_scale).long()
+        else:
+            points = ((root_position + self.terrain.cfg.border_size)/self.terrain.cfg.horizontal_scale).long()
         px = points[:,0]
         py = points[:,1]
         px = torch.clip(px, 0, self.height_samples.shape[0] - 2)
