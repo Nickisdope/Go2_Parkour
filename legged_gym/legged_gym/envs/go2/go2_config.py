@@ -4,13 +4,13 @@ class Go2CompetitionCfg( LeggedRobotCfg ):
 
     class env( LeggedRobotCfg.env ):
         num_envs = 4096
-        num_observations = 235
+        num_observations = 294
         symmetric = True  #True :  set num_privileged_obs = None;    false: num_privileged_obs = observations + 187 ,set "terrain.measure_heights" to true
-        num_privileged_obs = 235 #num_observations + 187 # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
+        num_privileged_obs = 294 #num_observations + 187 # if not None a priviledge_obs_buf will be returned by step() (critic obs for assymetric training). None is returned otherwise 
         num_actions = 12
         env_spacing = 3.  # not used with heightfields/trimeshes 
         send_timeouts = True # send time out information to the algorithm
-        episode_length_s = 25 # episode length in seconds
+        episode_length_s = 100 # episode length in seconds
 
     class terrain( LeggedRobotCfg.env ):
         mesh_type = 'competition' # "heightfield" # none, plane, heightfield or trimesh
@@ -23,7 +23,7 @@ class Go2CompetitionCfg( LeggedRobotCfg ):
         restitution = 0.
         # rough terrain only:
         measure_heights = True
-        measured_points_x = [-0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8] # 1mx1.6m rectangle (without center line)
+        measured_points_x = [-0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8]  # 1mx1.6m rectangle (without center line)
         measured_points_y = [-0.5, -0.4, -0.3, -0.2, -0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5]
         selected = False # select a unique terrain type and pass all arguments
         terrain_kwargs = None # Dict of arguments for selected terrain
@@ -62,7 +62,7 @@ class Go2CompetitionCfg( LeggedRobotCfg ):
         resampling_time = 10. # time before command are changed[s]
         heading_command = True # if true: compute ang vel command from heading error
         class ranges:
-            lin_vel_x = [0.5, 2.0] # min max [m/s]
+            lin_vel_x = [1.5, 1.5] # min max [m/s]
             lin_vel_y = [0., 0.]   # min max [m/s]
             ang_vel_yaw = [0., 0.]    # min max [rad/s]
             heading = [0, 0]
@@ -70,8 +70,8 @@ class Go2CompetitionCfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 50.}  # [N*m/rad]
-        damping = {'joint': 2}     # [N*m*s/rad]
+        stiffness = {'joint': 20.}  # [N*m/rad]
+        damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -83,7 +83,7 @@ class Go2CompetitionCfg( LeggedRobotCfg ):
         foot_name = "foot"
         penalize_contacts_on = ["thigh", "calf"]
         terminate_after_contacts_on = ["base"]
-        self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = True
 
     class domain_rand:
