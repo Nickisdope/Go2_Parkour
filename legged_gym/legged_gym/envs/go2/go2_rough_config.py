@@ -1,4 +1,5 @@
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
+from matplotlib.pyplot import cla
 
 class Go2RoughCfg( LeggedRobotCfg ):
     class env:
@@ -109,6 +110,21 @@ class Go2RoughCfg( LeggedRobotCfg ):
             torques = -0.0002
             dof_pos_limits = -10.0
 
+class Go2SteppingCfg(Go2RoughCfg)
+    class terrain(Go2RoughCfg.terrain):
+        # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
+        terrain_proportions = [0., 0., 0., 0., 0., 1., 0,  0.]
+
+class Go2GapCfg(Go2RoughCfg)
+    class terrain(Go2RoughCfg.terrain):
+        # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
+        terrain_proportions = [0., 0., 0., 0., 0., 0., 1,  0.]
+
+class Go2PitCfg(Go2RoughCfg)
+    class terrain(Go2RoughCfg.terrain):
+        # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
+        terrain_proportions = [0., 0., 0., 0., 0., 0., 0,  1.]
+
 class Go2RoughCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
@@ -116,5 +132,6 @@ class Go2RoughCfgPPO( LeggedRobotCfgPPO ):
         run_name = ''
         experiment_name = 'rough_go2'
         num_steps_per_env = 48 # per iteration
+        max_iterations = 15000
 
   
