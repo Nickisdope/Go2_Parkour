@@ -43,12 +43,8 @@ def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 50)
-    env_cfg.terrain.num_rows = 10
-    env_cfg.terrain.num_cols = 1
-    env_cfg.terrain.max_init_terrain_level = 9
-    env_cfg.terrain.curriculum = True
-    # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
-    env_cfg.terrain.terrain_proportions = [0., 0., 0., 0., 0., 1., 0, 0.]
+    env_cfg.terrain.curriculum = False
+    #env_cfg.terrain.mesh_type = 'plane'
     env_cfg.noise.add_noise = False
     env_cfg.domain_rand.randomize_friction = False
     env_cfg.domain_rand.push_robots = False
@@ -76,7 +72,9 @@ def play(args):
     camera_vel = np.array([1., 1., 0.])
     camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
     img_idx = 0
-
+    #  get input 
+    #vel =x
+    #obs[:,12:15] = vel.
     for i in range(10*int(env.max_episode_length)):
         actions = policy(obs.detach())
         obs, _, rews, dones, infos = env.step(actions.detach())
