@@ -110,17 +110,17 @@ class Go2RoughCfg( LeggedRobotCfg ):
             torques = -0.0002
             dof_pos_limits = -10.0
 
-class Go2SteppingCfg(Go2RoughCfg)
+class Go2SteppingCfg(Go2RoughCfg):
     class terrain(Go2RoughCfg.terrain):
         # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
         terrain_proportions = [0., 0., 0., 0., 0., 1., 0,  0.]
 
-class Go2GapCfg(Go2RoughCfg)
+class Go2GapCfg(Go2RoughCfg):
     class terrain(Go2RoughCfg.terrain):
         # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
         terrain_proportions = [0., 0., 0., 0., 0., 0., 1,  0.]
 
-class Go2PitCfg(Go2RoughCfg)
+class Go2PitCfg(Go2RoughCfg):
     class terrain(Go2RoughCfg.terrain):
         # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
         terrain_proportions = [0., 0., 0., 0., 0., 0., 0,  1.]
