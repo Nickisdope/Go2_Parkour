@@ -48,7 +48,7 @@ def play(args):
     env_cfg.terrain.max_init_terrain_level = 9
     env_cfg.terrain.curriculum = True
     # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, gap, pit]
-    env_cfg.terrain.terrain_proportions = [0., 0., 0., 0., 0., 1., 0, 0.]
+    # env_cfg.terrain.terrain_proportions = [0., 0., 0., 0., 0., 0., 0, 1.]
     env_cfg.noise.add_noise = False
     env_cfg.domain_rand.randomize_friction = False
     env_cfg.domain_rand.push_robots = False
