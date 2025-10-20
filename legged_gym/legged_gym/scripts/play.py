@@ -52,6 +52,8 @@ def play(args):
     env_cfg.noise.add_noise = False
     env_cfg.domain_rand.randomize_friction = False
     env_cfg.domain_rand.push_robots = False
+    env_cfg.commands.ranges.lin_vel_x = [1.5, 1.5]
+    env_cfg.commands.ranges.heading = [-3.14, 3.14]
 
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
