@@ -10,7 +10,7 @@ Compared with the original codebase, this project:
 
 ![teaser](go2_parkour.gif)
 
-https://github.com/user-attachments/assets/14fbcbda-e3c1-4093-8f0a-0e80a84b3a24
+https://github.com/user-attachments/assets/814422bf-aa9c-4b5f-b388-a78aa103aabb
 
 ## Installation
 
